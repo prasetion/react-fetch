@@ -4,20 +4,27 @@ import {useEffect, useState} from "react";
 
 export default function AvailablePlaces({onSelectPlace}) {
     const [availablePlaces, setAvailablePlaces] = useState([])
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        fetch('http://localhost:3000/places').then((res) => {
-                return res.json();
-            }
-        ).then((data) => {
+
+        async function fetchPlaces() {
+            setIsLoading(true);
+            const res = await fetch('http://localhost:3000/places');
+            const data = await res.json();
             setAvailablePlaces(data.places);
-        });
+            setIsLoading(false);
+        }
+
+        fetchPlaces();
     }, []);
 
     return (
         <Places
             title="Available Places"
             places={availablePlaces}
+            isLoading={isLoading}
+            loadingText="Loading places..."
             fallbackText="No places available."
             onSelectPlace={onSelectPlace}
         />
